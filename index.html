@@ -369,25 +369,43 @@
     <script src="script.js"></script>
   
 	    <!-- PIX Popup Modal -->
-	    <div id="pix-popup" class="pix-popup-overlay">
-	      <div class="pix-popup-content">
-	        <button class="pix-popup-close" onclick="fecharPixPopup()">&times;</button>
-	        <h2>Pagamento PIX</h2>
-	        <p>Plano: <span id="pix-plano-nome"></span></p>
-	        <p>Valor: <span id="pix-valor"></span></p>
-	        <div id="pix-qr-code-container" class="pix-qr-code-container">
-	          <p>Gerando QR Code...</p>
-	        </div>
-	        <button id="pix-copia-cola" class="pix-copia-cola" onclick="copiarPix()">
-	          Copiar Código PIX
-	        </button>
-	        <p id="pix-status-msg" class="pix-status-msg">Aguardando pagamento...</p>
-	        <p class="pix-aviso">
-	          O QR Code expira em 30 minutos. Após o pagamento, a liberação é
-	          automática.
-	        </p>
-	      </div>
-	    </div>
+<div id="pix-popup" class="pix-popup-overlay">
+		      <div class="pix-popup-content">
+		        <button class="pix-popup-close" onclick="fecharPixPopup()">&times;</button>
+		        
+		        <div class="pix-beneficios">
+		          <h3>Benefícios exclusivos</h3>
+		          <ul>
+		            <li><span class="check-icon">✓</span> Acesso ao conteúdo</li>
+		            <li><span class="check-icon">✓</span> Chat exclusivo com o criador</li>
+		            <li><span class="check-icon">✓</span> Cancele a qualquer hora</li>
+		          </ul>
+		        </div>
+		
+		        <div class="pix-pagamento-info">
+		          <h3>Formas de pagamento</h3>
+		          <p class="pix-valor-label">Valor</p>
+		          <p class="pix-valor-display" id="pix-valor">R$ 0,00</p>
+		        </div>
+		
+		        <div id="pix-qr-code-container" class="pix-qr-code-container">
+		          <p>Gerando QR Code...</p>
+		        </div>
+		        
+		        <div class="pix-copia-cola-area">
+		          <p id="pix-copia-cola-text" class="pix-copia-cola-text">Código PIX</p>
+		          <button id="pix-copia-cola-button" class="pix-copia-cola-button" onclick="copiarPix()">
+		            Copiar chave Pix
+		          </button>
+		        </div>
+		        
+		        <button class="pix-cartao-credito">
+		          Pagar com cartão de crédito
+		        </button>
+		        
+		        <p id="pix-status-msg" class="pix-status-msg">Aguardando pagamento...</p>
+		      </div>
+		    </div>
 	
 	  <script src="script.js"></script>
 </body>

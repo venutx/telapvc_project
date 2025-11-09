@@ -613,14 +613,20 @@ body {
 }
 
 .pix-popup-content {
-  background-color: #fff;
-  padding: 30px;
+  background-color: #000; /* Fundo preto */
+  padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   max-width: 400px;
   width: 90%;
-  text-align: center;
   position: relative;
+  color: #fff; /* Texto branco */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .pix-popup-close {
@@ -631,28 +637,76 @@ body {
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #333;
+  color: #fff;
+  z-index: 10;
 }
 
-.pix-popup-content h2 {
-  color: #333;
+/* Benefícios */
+.pix-beneficios {
+  border-bottom: 1px solid #333;
+  padding-bottom: 15px;
   margin-bottom: 15px;
 }
 
-.pix-popup-content p {
-  color: #555;
-  margin-bottom: 5px;
+.pix-beneficios h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 
+.pix-beneficios ul {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+}
+
+.pix-beneficios li {
+  font-size: 14px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  color: #ccc;
+}
+
+.check-icon {
+  color: #ff8c00; /* Laranja/Amarelo para o check */
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+/* Informações de Pagamento */
+.pix-pagamento-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+.pix-valor-label {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+.pix-valor-display {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* QR Code */
 .pix-qr-code-container {
-  margin: 20px 0;
-  padding: 15px;
-  border: 1px solid #ddd;
+  margin: 15px 0;
+  padding: 10px;
+  background-color: #fff; /* Fundo branco para o QR Code */
   border-radius: 8px;
-  min-height: 150px; /* Para evitar que o layout salte */
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 150px;
 }
 
 .pix-qr-code-container img {
@@ -661,31 +715,63 @@ body {
   border-radius: 4px;
 }
 
-.pix-copia-cola {
-  background-color: #007bff; /* Cor primária */
-  color: white;
+/* Copia e Cola */
+.pix-copia-cola-area {
+  margin-bottom: 15px;
+}
+
+.pix-copia-cola-text {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  word-break: break-all;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.pix-copia-cola-button {
+  background: linear-gradient(to right, #ff8c00, #ffb84d); /* Gradiente laranja */
+  color: #000;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 12px 20px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  margin-top: 10px;
-  transition: background-color 0.3s;
+  font-weight: bold;
+  transition: opacity 0.3s;
   width: 100%;
 }
 
-.pix-copia-cola:hover {
-  background-color: #0056b3;
+.pix-copia-cola-button:hover {
+  opacity: 0.9;
 }
 
+/* Cartão de Crédito (Placeholder) */
+.pix-cartao-credito {
+  background-color: #fff;
+  color: #000;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.pix-cartao-credito:hover {
+  background-color: #eee;
+}
+
+/* Status Message */
 .pix-status-msg {
   font-weight: bold;
-  color: orange;
+  color: #ff8c00; /* Laranja para status */
   margin-top: 15px;
-}
-
-.pix-aviso {
-  font-size: 12px;
-  color: #888;
-  margin-top: 15px;
+  font-size: 14px;
+  text-align: center;
 }

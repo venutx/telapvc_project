@@ -145,7 +145,7 @@ const pixPopup = document.getElementById("pix-popup");
 const pixPlanoNome = document.getElementById("pix-plano-nome");
 const pixValor = document.getElementById("pix-valor");
 const pixQrCodeContainer = document.getElementById("pix-qr-code-container");
-const pixCopiaColaButton = document.getElementById("pix-copia-cola");
+const pixCopiaColaButton = document.getElementById("pix-copia-cola-button");
 const pixStatusMsg = document.getElementById("pix-status-msg");
 
 let pixCopiaColaText = "";
@@ -164,28 +164,32 @@ function formatarValor(valor) {
 async function abrirPixPopup(valor, plano) {
   // Limpar estado anterior
   pixQrCodeContainer.innerHTML = '<p>Gerando QR Code...</p>';
+  document.getElementById("pix-copia-cola-text").textContent = 'Código PIX';
+  document.getElementById("pix-copia-cola-text").style.display = 'none';
   pixCopiaColaButton.style.display = 'none';
   pixStatusMsg.textContent = 'Aguardando pagamento...';
-  pixStatusMsg.style.color = 'orange';
+  pixStatusMsg.style.color = '#ff8c00'; // Laranja do novo visual
   
   // Preencher informações do plano
-  pixPlanoNome.textContent = plano;
+  // Não há elemento para o nome do plano no novo visual, apenas o valor
+  // pixPlanoNome.textContent = plano; 
   pixValor.textContent = formatarValor(valor);
   
   // Exibir o pop-up
   pixPopup.classList.add("active");
 
   try {
-    // Chamar a API para gerar o PIX
+    // Chamar a API para gerar o PIX com a nova estrutura de body
     const response = await fetch('/api/gerar-pix', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ 
-        valor: valor,
-        descricao: `Assinatura ${plano}`,
-        // Adicione aqui outros dados do cliente se necessário (nome, email, etc.)
+        value: valor, // 'value' em vez de 'valor'
+        name: 'Cliente', // Hardcoded, pode ser alterado se o cliente fornecer um campo de nome
+        email: 'cliente@exemplo.com', // Hardcoded, pode ser alterado
+        description: `Assinatura ${plano}`,
       }),
     });
 
@@ -193,11 +197,14 @@ async function abrirPixPopup(valor, plano) {
 
     if (response.ok) {
       // Sucesso na geração
-      pixTxid = data.txid;
-      pixCopiaColaText = data.pixCopiaECola;
+      pixTxid = data.payment_id; // 'payment_id' em vez de 'txid'
+      pixCopiaColaText = data.qr_code_text; // 'qr_code_text' em vez de 'pixCopiaECola'
+      document.getElementById("pix-copia-cola-text").textContent = pixCopiaColaText;
+      document.getElementById("pix-copia-cola-text").style.display = 'block';
       
       // Exibir QR Code
-      pixQrCodeContainer.innerHTML = `<img src="${data.qrCode}" alt="QR Code PIX">`;
+      // A API retorna o QR Code em base64
+      pixQrCodeContainer.innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code PIX">`;
       
       // Exibir botão Copia e Cola
       pixCopiaColaButton.style.display = 'block';
@@ -207,7 +214,7 @@ async function abrirPixPopup(valor, plano) {
 
     } else {
       // Erro na API
-      pixQrCodeContainer.innerHTML = `<p style="color: red;">Erro ao gerar PIX: ${data.mensagem || 'Tente novamente.'}</p>`;
+      pixQrCodeContainer.innerHTML = `<p style="color: red;">Erro ao gerar PIX: ${data.error.message || 'Tente novamente.'}</p>`;
       pixStatusMsg.textContent = 'Erro na geração do PIX.';
       pixStatusMsg.style.color = 'red';
     }
@@ -266,7 +273,8 @@ function iniciarMonitoramentoPix(txid) {
         pixStatusMsg.style.color = 'green';
         pararMonitoramentoPix();
         // Redirecionar ou liberar acesso
-        // window.location.href = '/acesso-liberado';
+        window.location.href = '/pagina-de-obrigado'; // ESPAÇO PARA PÁGINA DE OBRIGADO
+
       } else if (data.status === 'EXPIRADA') {
         pixStatusMsg.textContent = 'PIX Expirado. Gere um novo.';
         pixStatusMsg.style.color = 'red';

@@ -3,71 +3,54 @@
 
 // Importante: A chave da WiinPay deve ser configurada como uma variável de ambiente
 // no Vercel (WIINPAY_KEY) para segurança.
+// O webhook também deve ser configurado como variável de ambiente (WIINPAY_WEBHOOK)
 
 export default async function handler(req, res) {
-  // Apenas aceita requisições POST
   if (req.method !== 'POST') {
-    return res.status(405).json({ mensagem: 'Método não permitido' });
+    return res.status(405).json({ error: 'Método não permitido' });
   }
 
-  // Verifica se a chave da API está configurada
-  const wiinpayKey = process.env.WIINPAY_KEY;
-  if (!wiinpayKey) {
-    console.error('WIINPAY_KEY não configurada nas variáveis de ambiente.');
-    return res.status(500).json({ mensagem: 'Erro de configuração do servidor.' });
-  }
+  // O frontend deve enviar: value, name, email, description
+  const { value, name, email, description } = req.body;
 
-  const { valor, descricao } = req.body;
-
-  // Validação básica dos dados
-  if (!valor || typeof valor !== 'number' || valor <= 0) {
-    return res.status(400).json({ mensagem: 'Valor inválido.' });
+  // Validação básica
+  if (!value || isNaN(Number(value)) || Number(value) <= 0) {
+    return res.status(400).json({ error: 'Valor inválido.' });
   }
-  if (!descricao || typeof descricao !== 'string') {
-    return res.status(400).json({ mensagem: 'Descrição inválida.' });
-  }
-
-  // Formata o valor para o padrão da API (string com duas casas decimais)
-  const valorFormatado = valor.toFixed(2);
 
   try {
-    const response = await fetch('https://api.wiinpay.com/v1/pix/cob', {
+    const response = await fetch('https://api.wiinpay.com.br/payment/create', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${wiinpayKey}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        valor: valorFormatado,
-        descricao: descricao,
-        // O webhook é crucial para receber a confirmação de pagamento
-        webhookUrl: 'https://seusite.com/api/webhook-wiinpay', // SUBSTITUA PELA SUA URL REAL
-        // Outros campos opcionais da WiinPay podem ser adicionados aqui
-      }),
+        api_key: process.env.WIINPAY_KEY,
+        value: Number(value),
+        name: name || 'Cliente', // Usar 'Cliente' como fallback
+        email: email || 'cliente@exemplo.com', // Usar email de fallback
+        description: description || 'Pagamento via PIX',
+        webhook_url: process.env.WIINPAY_WEBHOOK || '' // Webhook deve ser configurado
+      })
     });
 
     const data = await response.json();
 
-    if (response.ok) {
-      // Sucesso na criação da cobrança
-      // A resposta da WiinPay deve conter o QR Code (base64) e o PIX Copia e Cola
-      return res.status(200).json({
-        txid: data.txid, // ID da transação para monitoramento
-        qrCode: data.qrCode, // Imagem do QR Code em base64
-        pixCopiaECola: data.pixCopiaECola,
-        mensagem: 'PIX gerado com sucesso.'
-      });
-    } else {
-      // Erro retornado pela API da WiinPay
-      console.error('Erro da WiinPay:', data);
-      return res.status(response.status).json({
-        mensagem: data.mensagem || 'Erro ao comunicar com a WiinPay.',
-        detalhes: data
-      });
+    if (!response.ok) {
+      console.error('Erro WiinPay:', data);
+      return res.status(400).json({ error: data });
     }
 
+    // A API WiinPay retorna qr_code_base64 e qr_code_text
+    return res.status(200).json({
+      qr_code_base64: data.qr_code_base64 || data.qrCodeBase64,
+      qr_code_text: data.qr_code_text || data.qrCode,
+      payment_id: data.payment_id || data.id
+    });
+
   } catch (error) {
-    console.error('Erro ao gerar PIX:', error);
-    return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
+    console.error(error);
+    return res.status(500).json({ error: 'Erro interno do servidor' });
   }
 }
