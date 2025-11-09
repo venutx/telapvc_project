@@ -33,6 +33,22 @@ function setupEventListeners() {
   filterButtons.forEach((button) => {
     button.addEventListener("click", () => switchFilter(button.dataset.filter));
   });
+  
+  // Adiciona listener de clique para os botões de assinatura
+  document.querySelectorAll(".subscription-button").forEach(button => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault(); 
+      
+      const valor = parseFloat(button.dataset.valor);
+      const plano = button.dataset.plano;
+      
+      if (!isNaN(valor) && plano) {
+        abrirPixPopup(valor, plano);
+      } else {
+        console.error("Dados de valor ou plano inválidos no botão de assinatura.");
+      }
+    });
+  });
 }
 
 // Promotions functionality
@@ -105,22 +121,7 @@ function switchFilter(filter) {
   console.log(`Filtering by: ${filter}`);
 }
 
-// Smooth animations for content switching
-function addSmoothTransition(element) {
-  element.style.transition = "all 0.3s ease-in-out";
-}
 
-// Add smooth transitions to all interactive elements
-document.addEventListener("DOMContentLoaded", function () {
-  const interactiveElements = [
-    ...document.querySelectorAll(".subscription-button"),
-    ...document.querySelectorAll(".tab"),
-    ...document.querySelectorAll(".filter-button"),
-    ...document.querySelectorAll(".media-item"),
-  ];
-
-  interactiveElements.forEach(addSmoothTransition);
-});
 
 // Optional: Add keyboard navigation
 document.addEventListener("keydown", function (e) {
